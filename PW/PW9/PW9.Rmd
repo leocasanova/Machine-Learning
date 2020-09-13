@@ -1,0 +1,119 @@
+---
+title: "Casanova_Leo_PW7"
+subtitle: "Hierarchical Clustering"
+author: Casanova Leo
+date: "`r format(Sys.time())`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: flatly
+    highlight: espresso
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Distances dist()
+
+To calculate the distance in R we use the dist() function. Here is a tutorial of how use it.
+
+```{r}
+M <- matrix(1:15,5,3)
+M
+dist(M)
+dist(M, method= "manhattan")
+```
+
+# Dendrogram hclust()
+
+```{r}
+dendro <- hclust(dist(M))
+plot(dendro)
+```
+
+# Hierarchical clustering on Iris dataset
+
+## 1.
+Download the iris dataset from here  and import it into R.
+
+```{r}
+iris = read.csv("iris.data", header = T, na.strings = "?")
+```
+
+## 2.
+Choose randomly 40 observations of the iris dataset and store the sample dataset into sampleiris.
+
+```{r}
+sample.iris = iris[sample(nrow(iris),40),]
+```
+
+## 3.
+Calculate the euclidean distances between the flowers. Store the results in a matrix called D. (Remark: the last column of the dataset is the class labels of the flowers)
+
+```{r}
+D = dist(sample.iris[-5])
+```
+
+## 4.
+Construct a dendrogram on the iris dataset using the method average. Store the result in dendro.avg.
+
+```{r}
+dendro.avg = hclust(D, method = "average")
+```
+
+## 5.
+Plot the dendrogram.
+
+```{r}
+plot(dendro.avg)
+```
+
+## 6.
+Plot again the dendrogram using the following command:
+
+```{r}
+plot(dendro.avg, hang=-1, label=sample.iris$class)
+```
+
+## 7.
+To cut the dendrogram and obtain a clustering use the cutree. You can choose the number of clusters you wish to obtain, or you can cut by choosing the height from the dendrogram figure. Cut the dendrogram in order to obtain 3 clusters. Store the results into vector groups.avg.
+
+```{r}
+groups.avg = cutree(dendro.avg, k = 3)
+```
+
+## 8.
+Visualize the cut tree using the function rect.hclust(). You can choose the colors of the rectangles too!
+
+```{r}
+rect.hclust(dendro.avg, k = 3)
+```
+
+## 9.
+Compare the obtained results obtained with Hierarchical clustering and the real class labels of the flowers (function table()). Interpret the results.
+
+```{r}
+table(sample.iris$class, groups.avg)
+```
+
+## Bonus
+You can cut the tree manually (on demand!). To do so, plot a dendrogram first then use the function identify(). On the figure, click on the clusters you wish to obtain. Then hit Escape to finish.
+
+
+## 10.
+Now apply the Hierarchical clustering on the iris dataset (the 150 observations). Choose 3 clusters and compare the results with the real class labels. Compare different methods of Hierarchical clustering (average, complete and single linkages).
+
+```{r}
+D.all = dist(iris[-5])
+dendro.avg.all = hclust(D.all, method = "average")
+plot(dendro.avg.all)
+plot(dendro.avg.all, hang=-1, label=iris$class)
+groups.avg.all = cutree(dendro.avg.all, k = 3)
+rect.hclust(dendro.avg.all, k = 3)
+table(iris$class, groups.avg.all)
+```
